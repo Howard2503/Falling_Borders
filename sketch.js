@@ -9,13 +9,13 @@ let nextPiece;     // 下一个方块
 
 function setup() {
   createCanvas(cols * blockSize, rows * blockSize);
-  frameRate(1);  // 设置帧率
+  frameRate(10);  // 设置帧率
   initBoard();
   generatePiece();
 }
 
 function draw() {
-  background(0);
+  background(0);  // 黑色背景
   drawBoard();
   currentPiece.update();
   currentPiece.show();
@@ -43,11 +43,23 @@ function initBoard() {
 }
 
 function drawBoard() {
+  // 画网格
+  stroke(50);
+  strokeWeight(1);
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      noFill();
+      rect(x * blockSize, y * blockSize, blockSize, blockSize);
+    }
+  }
+
+  // 绘制已固定的方块
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       if (board[y][x] !== 0) {
         fill(board[y][x]);
-        noStroke();
+        stroke(0);
+        strokeWeight(2);
         rect(x * blockSize, y * blockSize, blockSize, blockSize);
       }
     }
@@ -125,6 +137,8 @@ class Piece {
 
   show() {
     fill(this.color);
+    stroke(0);
+    strokeWeight(2);
     for (let y = 0; y < this.shape.length; y++) {
       for (let x = 0; x < this.shape[y].length; x++) {
         if (this.shape[y][x]) {
