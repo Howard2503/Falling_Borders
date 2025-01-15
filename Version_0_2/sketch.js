@@ -1,5 +1,6 @@
 // 定义游戏的一些常量和变量
 let cols = 10;  // 游戏区列数
+let colsOfBelt = 4;  // 游戏区列数
 let rows = 20;  // 游戏区行数
 let blockSize = 30; // 方块大小
 let board = [];  // 游戏区
@@ -8,8 +9,8 @@ let currentPiece;  // 当前下落的方块
 let nextPiece;     // 下一个方块
 
 function setup() {
-  createCanvas(cols * blockSize, rows * blockSize);
-  frameRate(10);  // 设置帧率
+  createCanvas((cols + colsOfBelt) * blockSize, rows * blockSize);
+  frameRate(1);  // 设置帧率
   initBoard();
   generatePiece();
 }
@@ -36,7 +37,7 @@ function keyPressed() {
 function initBoard() {
   for (let y = 0; y < rows; y++) {
     board[y] = [];
-    for (let x = 0; x < cols; x++) {
+    for (let x = 0; x < cols + colsOfBelt; x++) {
       board[y][x] = 0;
     }
   }
@@ -47,15 +48,20 @@ function drawBoard() {
   stroke(50);
   strokeWeight(1);
   for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
-      noFill();
-      rect(x * blockSize, y * blockSize, blockSize, blockSize);
+    for (let x = 0; x < cols + colsOfBelt; x++) {
+      if (x < cols) {
+        noFill();
+        rect(x * blockSize, y * blockSize, blockSize, blockSize);
+      } else {
+        fill(100);
+        rect(x * blockSize, y * blockSize, blockSize, blockSize);
+      }
     }
   }
 
   // 绘制已固定的方块
   for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
+    for (let x = 0; x < cols + colsOfBelt; x++) {
       if (board[y][x] !== 0) {
         fill(board[y][x]);
         stroke(0);
@@ -76,7 +82,7 @@ function generatePiece() {
     new Piece([[0, 0, 1], [1, 1, 1]], color(255, 255, 0)), // J
     new Piece([[1, 1, 1, 1]], color(128, 0, 128)),     // I
   ];
-  
+
   currentPiece = nextPiece || random(pieces);
   nextPiece = random(pieces);
 }
@@ -87,7 +93,7 @@ function checkCollision(piece) {
       if (piece.shape[y][x]) {
         let boardX = piece.x + x;
         let boardY = piece.y + y;
-        if (boardX < 0 || boardX >= cols || boardY >= rows || board[boardY][boardX] !== 0) {
+        if (boardX < 0 || boardX >= cols + colsOfBelt || boardY >= rows || board[boardY][boardX] !== 0) {
           return true;
         }
       }
@@ -121,7 +127,7 @@ function clearLines() {
     }
     if (fullLine) {
       board.splice(y, 1);
-      board.unshift(Array(cols).fill(0));
+      board.unshift(Array(cols + colsOfBelt).fill(0));
     }
   }
 }
@@ -131,7 +137,7 @@ class Piece {
   constructor(shape, color) {
     this.shape = shape;
     this.color = color;
-    this.x = floor(cols / 2) - floor(shape[0].length / 2);
+    this.x = floor(cols + colsOfBelt / 2) - floor(shape[0].length / 2);
     this.y = 0;
   }
 
